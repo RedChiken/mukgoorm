@@ -27,16 +27,10 @@ func Json(c *gin.Context){
 		log.Error(err1)
 		c.HTML(http.StatusNotFound, "error/404.tmpl", gin.H{})
 	}
-
-	// jstreeFormat := map[string]map[string]JsTreeContainer{
-	// 	"core": map[string]JsTreeContainer{
-	// 		"data": ret,
-	// 	},
-	// }
-
 	jstreeFormat := map[string]JsTreeContainer{
-		"data": ret, 
+		"data": ret,
 	}
+	fmt.Print("Json Result : ")
 	fmt.Print(jstreeFormat)
 	fmt.Print("\n\n")
 
@@ -48,6 +42,9 @@ func Json(c *gin.Context){
 func MakeJsTree(rootFile os.FileInfo, rootDir string)(JsTreeContainer, error){
 	var subtree JsTreeContainer
 	if rootFile.IsDir() {	// i think this wasn't work correctly
+		fmt.Print("\n")
+		fmt.Print("this is folder : ")
+		fmt.Print(rootDir)
 		files, err := ioutil.ReadDir(rootDir)
 		if err != nil {
 			panic(err)
@@ -56,24 +53,14 @@ func MakeJsTree(rootFile os.FileInfo, rootDir string)(JsTreeContainer, error){
 			for i := 0; i < len(files); i++ {
 				subdata, _ := MakeJsTree(files[i], rootDir + "/" + files[i].Name())
 				subByte = append(subByte, subdata)
-
-				fmt.Print("\n\n")
-				fmt.Print("this is folder : ")
-				fmt.Print(subByte)
-
 			}
 			subtree = JsTreeContainer{rootFile.Name(), subByte}
-
-			fmt.Print("\n")
-			fmt.Print(subtree)
-
 		}
 	} else {
-		subtree = JsTreeContainer{rootFile.Name(), []JsTreeContainer{}}
-
 		fmt.Print("\n")
 		fmt.Print("this is file : ")
-		fmt.Print(subtree)
+		fmt.Print(rootDir)
+		subtree = JsTreeContainer{rootFile.Name(), []JsTreeContainer{}}
 	}
 
 	fmt.Print("\n")
